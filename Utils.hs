@@ -4,7 +4,7 @@ dx = [0, 1, 0, -1]
 dy = [1, 0, -1, 0]
 
 insideBoard::Pos->(Int,Int)->Bool
-insideBoard (x,y) (n,m) = 0 <= x && x < n && 0 <= y && y < m
+insideBoard (x,y) (n,m) = 0 <= x && x <= n && 0 <= y && y <= m
 
 type Pos = (Int,Int)
 
@@ -19,4 +19,6 @@ moves = [L, R, U, D]
 
 adjacents::Pos->(Int,Int)->[Pos]
 adjacents x y = [p | p <- map (move x) moves, insideBoard p y]
-                            
+
+oo::Int
+oo = 99
