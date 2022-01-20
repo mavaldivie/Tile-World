@@ -1,14 +1,23 @@
 module Random where
 
-newtype RandomGen = RandomGen { current::Int } deriving (Show)
+import Utils(del)
+import Data.Time.Clock(getCurrentTime)
 
-randomFactor = 13
-randomMod = 73939133
-randomSum = 1000000007
+fun::IO Int 
+fun = do 
+    x <- fmap show getCurrentTime
+    let y = take 7 $ drop 20 x 
+    return $ read y
 
-next::RandomGen->Int
-next rg = mod (randomSum + current rg * randomFactor) randomMod
+rand::Int->IO Int 
+rand m = fmap (`mod` m) fun
 
-gen::Int->Int->RandomGen->(Int,RandomGen)
-gen l r rg = (l + mod (next rg) (r - l + 1), RandomGen (next rg))
+ber::Int->IO Bool 
+ber x = fmap (== 0) (rand x)
 
+randomSelect::[a]->Int->IO [a]
+randomSelect a 0 = return []
+randomSelect a n = do
+    r <- rand $ length a 
+    x <- randomSelect (del a r) (n-1) 
+    return $ (a !! r) : x
