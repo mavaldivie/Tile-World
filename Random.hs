@@ -1,13 +1,16 @@
-module Random where
+module Random(rand, ber, randomSelect, fun) where
 
 import Utils(del)
 import Data.Time.Clock(getCurrentTime)
+import Text.Read(readMaybe)
 
 fun::IO Int 
 fun = do 
     x <- fmap show getCurrentTime
     let y = take 7 $ drop 20 x 
-    return $ read y
+    case readMaybe y of
+            Just n  -> return n 
+            Nothing -> fun
 
 rand::Int->IO Int 
 rand m = fmap (`mod` m) fun
