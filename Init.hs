@@ -26,3 +26,14 @@ initBoard = do
     g <- randomSelect (empty f) obstacles
     let h = f // [(p,Obstacle) | p <- g]
     return h
+
+shuffle::Board->IO Board
+shuffle board = do
+    let a = [(i,j) | i <- [0..boardRows-1], 
+                           j <- [0..boardColumns-1], 
+                           i >= houseRows || j >= houseColumns]
+        (n,m) = limits board
+        c = [board!p | p <- a]
+    d <- randomSelect a (length c)
+    let e = board // zip d c
+    return e

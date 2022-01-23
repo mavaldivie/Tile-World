@@ -20,3 +20,6 @@ houseRows = 2
 
 houseColumns::Int 
 houseColumns = 2
+
+shuffleInterval::Int 
+shuffleInterval = 10
