@@ -39,8 +39,9 @@ moveChild b p = do
             g <- filterM (\x -> ber 2) s 
             return $ foldl (\x y -> put x y Muck) c g    
 
+first::Board->Pos->Mov->Pos
 first b p d | not $ insideBoard p lim  = (-1,-1)
             | b!p == Empty = p
             | b!p == Obstacle = first b (move p d) d 
             | otherwise = (-1,-1)
-    where lim = limits b 
+            where lim = limits b 
