@@ -8,12 +8,6 @@ import Data.Array
 import Utils
 import Configuration(shuffleInterval)
 
-
-import Debug.Trace(trace)
-logs::Show a=>String->a->a
-logs x y = trace (x ++ show y) y
-
-
 main::IO()
 main= do
     a <- initBoard

@@ -4,18 +4,23 @@ import Utils
 import Data.Array
 import Data.List(unlines, unwords, intercalate)
 
-data Cell = Obstacle | Muck | House | ChildHouse | Empty | Child | 
-            ChildRobot | MuckRobot | Robot deriving (Eq)
+data Cell = Obstacle | Empty | Muck | House | ChildHouse | Child | 
+            ReactiveRobot | ChildReactiveRobot | MuckReactiveRobot | 
+            StateRobot (Pos,Cell) | ChildStateRobot | MuckStateRobot 
+            deriving (Eq)
 instance Show Cell where
-    show Obstacle     = "#"
-    show Muck         = "*" 
-    show Child        = "C"
-    show House        = "^"
-    show Empty        = "_"
-    show ChildHouse   = "B"
-    show Robot        = "R"
-    show ChildRobot   = "%"
-    show MuckRobot    = "r"
+    show Obstacle           = "#"
+    show Muck               = "*" 
+    show Child              = "C"
+    show House              = "^"
+    show Empty              = "_"
+    show ChildHouse         = "B"
+    show ReactiveRobot      = "R"
+    show ChildReactiveRobot = "%"
+    show MuckReactiveRobot  = "r"
+    show (StateRobot _)     = "R"
+    show ChildStateRobot    = "%"
+    show MuckStateRobot     = "r"
 
 type Matrix a = Array (Int,Int) a
 new::Int->Int->a->Matrix a

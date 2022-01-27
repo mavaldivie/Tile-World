@@ -3,8 +3,11 @@ module Configuration where
 childs::Int
 childs = 4
 
-robots::Int
-robots = 2
+reactiveRobots::Int
+reactiveRobots = 1
+
+stateRobots::Int
+stateRobots = 1
 
 obstacles::Int
 obstacles = 20
