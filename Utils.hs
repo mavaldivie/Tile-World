@@ -24,7 +24,7 @@ around (f,s) y = filter (`insideBoard` y) [(f-1,s-1),(f-1,s+1),(f+1,s-1),(f+1,s+
                     ++ adjacents (f,s) y
 
 oo::Int
-oo = 99
+oo = 9999999
 
 del::[a]->Int->[a]
 del a i = take i a ++ drop (i+1) a

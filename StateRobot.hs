@@ -4,33 +4,48 @@ import Types
 import Utils
 import Moves
 import Data.Array
-import Distances
+import Distances 
 
-moveStateRobot::Board->Pos->Board
-moveStateRobot b p = if target == (-1, -1) then b
-                else case b!e of  
-                    Empty -> moveTo b p e 
-                    Muck  -> put (clean b p) e MuckStateRobot
-                    Child -> put (clean b p) e ChildStateRobot 
-                where 
-                    lim = limits b 
-                    m = distanceMatrix b p [Empty, Muck, Child]
-                    child = if pathExists (put b p Empty) (snd x)
-                            then x
-                            else (oo, (-1,-1))
-                            where x = nearestChild b m
-                    muck = nearestMuck b m
-                    target = snd $ min child muck
-                    e = head $ buildPath m p target
+moveStateRobot::Board->Pos->Int->Board
+moveStateRobot b p s = if target == (-1, -1) || e == (-1,-1) then b
+                    else case b!e of  
+                        Empty -> put (clean b p) e (StateRobot (target, b!target))
+                        Muck  -> put (clean b p) e (MuckStateRobot (target, b!target))
+                        Child -> put (clean b p) e ChildStateRobot
+                    where 
+                        StateRobot (x,y) = b!p
+                        lim = limits b 
+                        tmp = filter (\f -> b!f==y) $ x : adjacents x lim
 
-moveChildStateRobot::Board->Pos->Board
-moveChildStateRobot b p = if target /= (-1, -1) 
+                        m = distanceMatrix b p [Empty, Muck, Child]
+                        child = if fst x /= oo && l + m!snd x - m!p < s
+                                then x
+                                else (oo, (-1,-1))
+                                where 
+                                    x = nearestChild b m
+                                    l = pathExists (put b p Empty) (snd x)
+                        muck = nearestMuck b m 
+
+                        target = if x == (-1,-1) || null tmp
+                                then snd $ min child muck
+                                else g
+                                where g:_ = tmp 
+
+                        n = distanceMatrix b p [Empty, Muck]
+
+                        e:_ | not (insideBoard target lim) = [(-1,-1)]
+                            | x /= (-1,-1) && n!target /= oo = buildPath n p target
+                            | m!target /= oo = buildPath m p target
+                            | otherwise = [(-1,-1)]
+
+moveChildStateRobot::Board->Pos->Int->Board
+moveChildStateRobot b p s = if target /= (-1, -1) 
                 then case b!e of 
                     Empty -> moveTo b p e 
-                    House -> put (put b p (StateRobot ((0,0),Muck))) h ChildHouse
+                    House -> put (put b p (StateRobot ((-1,-1),Empty))) h ChildHouse
                 else case b!x of 
-                    Muck        -> put (put b p Child) x MuckStateRobot
-                    Empty       -> put (put b p Child) x (StateRobot ((0,0),Muck))
+                    Muck        -> put (put b p Child) x (MuckStateRobot (x,Muck))
+                    Empty       -> put (put b p Child) x (StateRobot ((-1,-1),Empty))
                     Child       -> put (put b p Child) x ChildStateRobot
                     _           -> b
                 where 
@@ -45,13 +60,16 @@ moveChildStateRobot b p = if target /= (-1, -1)
                     muck = filter (\t -> b!t == Muck) adj
                     empty = filter (\t -> b!t == Empty) adj
                     child = filter (\t -> b!t == Child && 
-                                    pathExists (put b p Child) t) adj
-                    x | not $ null muck = head muck 
-                      | not $ null empty = head empty
-                      | not $ null child = head child
-                      | otherwise = p
+                                    pathExists (put b p Child) t /= oo) adj
+                    x:_ | not $ null muck = muck 
+                        | not $ null empty = empty
+                        | not $ null child = child
+                        | otherwise = [p]
                     h = emptyHouse b
 
         
-moveMuckStateRobot::Board->Pos->Board
-moveMuckStateRobot b p = put b p (StateRobot ((0,0),Muck))
+moveMuckStateRobot::Board->Pos->Int->Board
+moveMuckStateRobot b p s = if x == p 
+                        then put b p (StateRobot ((-1,-1),Empty))
+                        else put b p (StateRobot (x,y))
+                        where MuckStateRobot (x, y) = b!p

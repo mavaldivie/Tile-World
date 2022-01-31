@@ -39,20 +39,22 @@ nearestHouse = nearest House
 nearestChild = nearest Child
 nearestMuck = nearest Muck
 
-buildPath mat b e = if b == e then []
+buildPath mat b e = if b == e || mat!e == oo then []
                     else buildPath mat b newe ++ [e]
                     where 
                         l = limits mat
                         adj = adjacents e l 
                         cur = mat!e
-                        newe = head $ filter (\x -> mat!x == (cur - 1)) adj
+                        newe :_ = filter (\x -> mat!x == (cur - 1)) adj
 
 emptyHouse b = head $ filter (\t -> b!t == House) [(i,j) | 
                     i <- [0..n], j <- [0..m]]
                 where (n,m) = limits b
 
-pathExists::Board->Pos->Bool
-pathExists b p = p /= (-1,-1) && target /= (-1,-1)
+pathExists::Board->Pos->Int
+pathExists b p = if p /= (-1,-1) && target /= (-1,-1)
+                then m!target
+                else oo
                 where
                     m = distanceMatrix b p [Empty,House]
                     target = snd $ nearestHouse b m 

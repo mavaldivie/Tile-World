@@ -6,7 +6,7 @@ import ChildMovements
 import RobotMovements
 import Data.Array
 import Utils
-import Configuration(shuffleInterval)
+import Configuration(shuffleInterval, boardColumns)
 
 main::IO()
 main= do
@@ -16,7 +16,7 @@ main= do
 loop::Board->Int->Int->IO()
 loop board mx s = do 
     putStr $ toString board
-    let x = moveRobots board    
+    let x = moveRobots board s    
     putStr $ toString x
     y <- moveChilds x
 
@@ -27,7 +27,10 @@ loop board mx s = do
                     i <- [0..n], j <- [0..m]]
         percent = muck * 100 `div` (empty + muck)
         nmx = max mx percent
-    putStr $ "Muck percent: " ++ show percent ++ "%\n\n"
+    
+    putStr $ replicate (2 * boardColumns) '-' ++ "\n"
+    putStr $ "Muck percent: " ++ show percent ++ "%\n"
+    putStr $ replicate (2 * boardColumns) '-' ++ "\n\n"
 
     if y == board && not (childMove y)
     then putStr $ "Max muck percent: " ++ show nmx ++ "%\n" ++ "Finished\n"

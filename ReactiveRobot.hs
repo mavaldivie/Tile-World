@@ -15,13 +15,13 @@ moveReactiveRobot b p = if target == (-1, -1) then b
                 where 
                     lim = limits b 
                     m = distanceMatrix b p [Empty, Muck, Child]
-                    child = if pathExists (put b p Empty) (snd x)
+                    child = if pathExists (put b p Empty) (snd x) /= oo
                             then x
                             else (oo, (-1,-1))
                             where x = nearestChild b m
                     muck = nearestMuck b m
                     target = snd $ min child muck
-                    e = head $ buildPath m p target
+                    e:_ =  buildPath m p target
 
 moveChildReactiveRobot::Board->Pos->Board
 moveChildReactiveRobot b p = if target /= (-1, -1) 
@@ -39,17 +39,18 @@ moveChildReactiveRobot b p = if target /= (-1, -1)
                     target = snd $ nearestHouse b m 
                     path = buildPath m p target
                     e = if length path == 1 || b!(path !! 1) == House
-                        then head path 
+                        then g 
                         else path !! 1
+                        where g:_ = path
                     adj = adjacents p lim 
                     muck = filter (\t -> b!t == Muck) adj
                     empty = filter (\t -> b!t == Empty) adj
                     child = filter (\t -> b!t == Child && 
-                                    pathExists (put b p Child) t) adj
-                    x | not $ null muck = head muck 
-                      | not $ null empty = head empty
-                      | not $ null child = head child
-                      | otherwise = p
+                                    pathExists (put b p Child) t /= oo) adj
+                    x:_ | not $ null muck = muck 
+                        | not $ null empty = empty
+                        | not $ null child = child
+                        | otherwise = [p]
                     h = emptyHouse b
 
         

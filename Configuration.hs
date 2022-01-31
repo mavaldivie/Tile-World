@@ -1,7 +1,7 @@
 module Configuration where
 
 childs::Int
-childs = 4
+childs = 10
 
 reactiveRobots::Int
 reactiveRobots = 1
@@ -10,19 +10,19 @@ stateRobots::Int
 stateRobots = 1
 
 obstacles::Int
-obstacles = 20
+obstacles = 60
 
 boardRows::Int 
-boardRows = 10
+boardRows = 20
 
 boardColumns::Int 
-boardColumns = 10
+boardColumns = 20
 
 houseRows::Int 
-houseRows = 2
+houseRows = 3
 
 houseColumns::Int 
-houseColumns = 2
+houseColumns = 4
 
 shuffleInterval::Int 
-shuffleInterval = 10
+shuffleInterval = 40

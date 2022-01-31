@@ -6,21 +6,21 @@ import Data.List(unlines, unwords, intercalate)
 
 data Cell = Obstacle | Empty | Muck | House | ChildHouse | Child | 
             ReactiveRobot | ChildReactiveRobot | MuckReactiveRobot | 
-            StateRobot (Pos,Cell) | ChildStateRobot | MuckStateRobot 
+            StateRobot (Pos,Cell) | ChildStateRobot | MuckStateRobot (Pos,Cell)
             deriving (Eq)
 instance Show Cell where
-    show Obstacle           = "#"
-    show Muck               = "*" 
-    show Child              = "C"
-    show House              = "^"
-    show Empty              = "_"
-    show ChildHouse         = "B"
-    show ReactiveRobot      = "R"
-    show ChildReactiveRobot = "%"
-    show MuckReactiveRobot  = "r"
-    show (StateRobot _)     = "R"
-    show ChildStateRobot    = "%"
-    show MuckStateRobot     = "r"
+    show Obstacle            = "#"
+    show Muck                = "*" 
+    show Child               = "C"
+    show House               = "^"
+    show Empty               = "_"
+    show ChildHouse          = "B"
+    show ReactiveRobot       = "R"
+    show ChildReactiveRobot  = "%"
+    show MuckReactiveRobot   = "r"
+    show (StateRobot _)      = "S"
+    show ChildStateRobot     = "%"
+    show (MuckStateRobot _)  = "r"
 
 type Matrix a = Array (Int,Int) a
 new::Int->Int->a->Matrix a
