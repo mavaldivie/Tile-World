@@ -20,7 +20,7 @@ instance Show Cell where
     show MuckReactiveRobot   = "r"
     show (StateRobot _)      = "S"
     show ChildStateRobot     = "%"
-    show (MuckStateRobot _)  = "r"
+    show (MuckStateRobot _)  = "s"
 
 type Matrix a = Array (Int,Int) a
 new::Int->Int->a->Matrix a

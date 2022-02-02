@@ -35,7 +35,7 @@ nearest c b mat = if null list then (oo,(-1,-1)) else minimum list
                     b!(i,j) == c &&
                     mat!(i,j) /= oo]
 
-nearestHouse = nearest House
+nearestHouse b m = min (nearest House b m) (nearest ChildHouse b m)
 nearestChild = nearest Child
 nearestMuck = nearest Muck
 
@@ -56,5 +56,5 @@ pathExists b p = if p /= (-1,-1) && target /= (-1,-1)
                 then m!target
                 else oo
                 where
-                    m = distanceMatrix b p [Empty,House]
+                    m = distanceMatrix b p [Empty,House,ChildHouse]
                     target = snd $ nearestHouse b m 
