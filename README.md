@@ -94,7 +94,7 @@ Para la representación en consola de cada uno de los elementos del tablero se s
 - MuckReactiveRobot   = r
 - StateRobot          = S
 - ChildStateRobot     = %
-- MuckStateRobot      = r
+- MuckStateRobot      = s
 
 #### Módulo ```Moves.hs```
 
@@ -116,5 +116,56 @@ Este módulo posee la lógica básica para el movimiento dentro del tablero.
 
 #### Módulo ```Main.hs```
 
+Este módulo posee el ciclo principal del programa, el cual se encarga de:
 
+- Crear el tablero.
+- Llamar a las funciones necesarias para cambiar el ambiente y mover a los niños y los robots. 
+- Chequea si la aplicación debe detenerse, cuando ya todos los niños y suciedad fueron controlados. 
+- Imprimir en consola la información necesaria para controlar el funcionamiento del programa. Cada vez que se mueven los robots y los niños se imprime el nuevo tablero. Además, se calcula tras cada paso el porcentaje de suciedad y se imprime este, así como el máximo valor que tuvo durante toda la ejecución del programa al finalizar el mismo.
 
+#### Módulo ```Distances.hs```
+
+Este módulo posee los algoritmos básicos para poder tomar decisiones sobre que camino tomar por cada robot.
+
+- La función distanceMatrix recibe un tablero del ambiente, una posición y un conjunto de posibles obstáculos y calcula la distancia desde esa posición hasta el resto de las casillas del tablero respetando dichos obstáculos. Esta función efecúa un BFS en las posiciones del tablero alcanzables desde la posición inicial y retorna un objeto Matrix Int con los cálculos hechos.
+- La función buildPathrecibe dos posiciones del tablero y retorna el camino más corto entre estas, haciendo uso del array de distancias que se le pasa como parámetro.
+- La función nearest calcula el objeto más cercano de un tipo dado haciendo uso del array de distancias que se le pasa como parámetro.
+- La función pathExists calcula la distancia una posición del tablero y el Corral.
+
+#### Módulo ```ChildMovements.hs```
+
+Este módulo es el encargado de manejar el movimiento de los niños. Estos se mueven aleatoriamente a alguna de las cuatro casillas adyacentes, siempre que sea posible moverse, y dejando rastros de suciedad, también de forma aleatoria, según la cantidad de niños que hayan cerca. El Monad moveChild, que se encarga de mover un niño en particular, se apoya en el módulo ```Random.hs``` para la simulación de la variable aleatoria cada vez que este se necesite.
+
+#### Módulo ```RobotMovements.hs```
+
+Este módulo es el encargado de identificar que método en específico es el encargado de mover a cada robot, y llamarlo en consecuencia.
+
+#### Módulo ```ReactiveRobot.hs```
+
+Este módulo posee la lógica para el funcionamiento de los robots reactivos. Estos poseen algunas reglas particulares:
+
+- Si el robot se encuentra cargando al niño y existe un camino desde la posición actual del robot hasta el corral pasando solo por vasillas vacías, entonces el robot se mueve en esa dirección.
+- Analiza en cada turno cual es el objetivo más cercano, Suciedad o Niño, y se mueven en consecuencia, priorizando al niño en caso de empate.
+- Si no es posible llevar al niño hasta el corral, ya sea porque el camino está bloqueado por obstáculos, suciedad, o incluso otros niños o robots, entonces obvia al niño, o lo suelta si es que lo estaba cargando, y decide moverse a la suciedad más cercana.
+- Si el robot se encuentra en una casilla con suciedad, entonces la limpia antes de continuar su camino.
+- Si no existe ningún objetivo viable, entonces el robot no se mueve.
+- No tiene en cuenta el proceso de cambio aleatorio del ambiente.
+- El robot se mueve dos pasos si está cargando a un niño.
+
+#### Módulo ```ReactiveRobot.hs```
+
+Este módulo posee la lógica para el funcionamiento de los robots deductivos. Estos se diferencian principalmente de los robots deductivos en que una vez que fijan un objetivo, guardan su posición hasta que este es alcanzado o ocurre algún cambio del ambiente que imposibilite su cumplimiento. Además, estos robots tienen en cuenta el cambio aleatorio del ambiente, es decir, solo fijan como objetivo a un niño si es posible llegar hasta la posición del mismo y transportarlo hasta el corral en una cantidad de pasos menor que los que restan para el cambio del ambiente, si esto no se cumple entonces se centran en una suciedad.
+
+--- 
+
+### 3. Observaciones sobre la implementación del programa.
+
+Se utilizó el paradigma de ¨funciones puras¨ de haskell siempre que se pudo, aprovechando de esta forma las optimizaciones que hace el compilador del lenguaje al utilizar este tipo de elementos. Solo las funciones del ciclo general del programa, y aquellas otras que interactúan de alguna forma con el módulo Random fueron implementadas de forma declarativa, al ser esto absolutamente necesario para su funcionamiento.
+
+El programa se encuentra modularizado, facilitando su edición y comprensión, y permitiendo además que los distintos factores que interactúan con el ambiente (Niños y Robots), queden separados entre si.
+
+### 4. Modelos de agentes utilizados.
+
+Se utilizó un modelo de agentes totalmente reactivo para la implementación de los ReactiveRobots, estos agente evalúan en cada paso el ambiente y toman la solución más adecuada en cada momento siguiendo un conjunto de reglas básicas.
+
+Se utilizó un modelo de agentes deductivos para la implementación de los StateRobots, 

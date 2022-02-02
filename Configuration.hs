@@ -1,7 +1,7 @@
 module Configuration where
 
 childs::Int
-childs = 10
+childs = 12
 
 reactiveRobots::Int
 reactiveRobots = 1
