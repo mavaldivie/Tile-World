@@ -152,20 +152,68 @@ Este módulo posee la lógica para el funcionamiento de los robots reactivos. Es
 - No tiene en cuenta el proceso de cambio aleatorio del ambiente.
 - El robot se mueve dos pasos si está cargando a un niño.
 
-#### Módulo ```ReactiveRobot.hs```
+#### Módulo ```StateRobot.hs```
 
 Este módulo posee la lógica para el funcionamiento de los robots deductivos. Estos se diferencian principalmente de los robots deductivos en que una vez que fijan un objetivo, guardan su posición hasta que este es alcanzado o ocurre algún cambio del ambiente que imposibilite su cumplimiento. Además, estos robots tienen en cuenta el cambio aleatorio del ambiente, es decir, solo fijan como objetivo a un niño si es posible llegar hasta la posición del mismo y transportarlo hasta el corral en una cantidad de pasos menor que los que restan para el cambio del ambiente, si esto no se cumple entonces se centran en una suciedad.
 
 --- 
 
-### 3. Observaciones sobre la implementación del programa.
+### 3. Observaciones sobre la implementación.
 
-Se utilizó el paradigma de ¨funciones puras¨ de haskell siempre que se pudo, aprovechando de esta forma las optimizaciones que hace el compilador del lenguaje al utilizar este tipo de elementos. Solo las funciones del ciclo general del programa, y aquellas otras que interactúan de alguna forma con el módulo Random fueron implementadas de forma declarativa, al ser esto absolutamente necesario para su funcionamiento.
+Se utilizó el paradigma de ¨funciones puras¨ de haskell siempre que se pudo, aprovechando de esta forma las optimizaciones que hace el compilador del lenguaje al utilizar estos elementos. Solo las funciones del ciclo general del programa, y aquellas otras que interactúan de alguna forma con el módulo Random fueron implementadas de forma declarativa, al ser esto absolutamente necesario para su funcionamiento.
 
 El programa se encuentra modularizado, facilitando su edición y comprensión, y permitiendo además que los distintos factores que interactúan con el ambiente (Niños y Robots), queden separados entre si.
 
 ### 4. Modelos de agentes utilizados.
 
-Se utilizó un modelo de agentes totalmente reactivo para la implementación de los ReactiveRobots, estos agente evalúan en cada paso el ambiente y toman la solución más adecuada en cada momento siguiendo un conjunto de reglas básicas.
+Se utilizó un modelo de agentes puramente reactivo para la implementación de los ReactiveRobots, estos agente evalúan en cada paso el ambiente y toman la solución más adecuada en cada momento siguiendo un conjunto de reglas básicas.
 
-Se utilizó un modelo de agentes deductivos para la implementación de los StateRobots, 
+Se utilizó un modelo de agentes deductivos para la implementación de los StateRobots, estos evalúan el ambiente para encontrar un objetivo, y se centran en este hasta su cumplimiento o hasta que algún cambio del ambiente se lo impida. Además, los StateRobots solo fijan un niño si la cantidad de pasos para recoger al niño y devolverlo al corral es menor que la cantidad de turnos hasta el próximo cambio aleatorio del sistema.
+
+### 5. Experimentación y resultados.
+
+Se experimentó con un ambiente de tamaño 20x20, dos robots, con distintas cantidades de niños y valores para el cambio aleatorio del ambiente. Tal y como se muestra a continuación.
+
+Robots reactivos: 2, Columnas: 20, Rows: 20, Obstaculos 60
+Máximo porciento de suciedad
+
+|       | 20 | 30 | 40 | 50 | 60 | 80 | 100 |
+| ----- | -- | -- | -- | -- | -- | -- | --- |
+| 4     | 6  | 9  | 11 | 12 | 7  | 5  | 8   |
+| 9     | 32 | 22 | 28 | 22 | 26 | 20 | 20  |
+| 16    | 71 | 63 | 62 | 53 | 59 | 42 | 59  |
+| 25    | 87 | 86 | 87 | 81 | 72 | 63 | 63  |
+| 36    | 91 | 92 | 86 | 82 | 83 | 87 | 83  |
+
+Robots reactivos: 2, Columnas: 20, Rows: 20, Obstaculos 60
+Cantidad de pasos para limpiar completamente el ambiente
+
+|       | 20   | 30   | 40   | 50   | 60   | 80   | 100  |
+| ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| 4     | 147  | 179  | 237  | 216  | 165  | 129  | 149  |
+| 9     | 640  | 481  | 563  | 394  | 589  | 268  | 346  |
+| 16    | 2009 | 2210 | 1485 | 1056 | 1006 | 773  | 773  |
+| 25    | 3655 | 3424 | 3022 | 1714 | 1421 | 797  | 1122 |
+| 36    | 5891 | 3092 | 2154 | 1956 | 1869 | 1653 | 1492 |
+
+Robots deductivos: 2, Columnas: 20, Rows: 20, Obstaculos 60
+Máximo porciento de suciedad
+
+|       | 20 | 30 | 40 | 50 | 60 | 80 | 100 |
+| ----- | -- | -- | -- | -- | -- | -- | --- |
+| 4     | 17 | 9  | 12 | 5  | 6  | 4  | 4   |
+| 9     | 64 | 43 | 40 | 29 | 22 | 20 | 15  |
+| 16    | 77 | 74 | 55 | 61 | 69 | 53 | 51  |
+| 25    | 89 | 85 | 78 | 75 | 73 | 68 | 71  |
+| 36    | 92 | 91 | 88 | 84 | 82 | 86 | 79  |
+
+Robots deductivos: 2, Columnas: 20, Rows: 20, Obstaculos 60
+Cantidad de pasos para limpiar completamente el ambiente
+
+|       | 20   | 30   | 40   | 50   | 60   | 80   | 100  |
+| ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| 4     | 526  | 198  | 341  | 126  | 151  | 105  | 146  |
+| 9     | 3375 | 1043 | 2232 | 706  | 329  | 391  | 317  |
+| 16    | 9104 | 3777 | 1550 | 1263 | 1476 | 1060 | 1193 |
+| 25    | 8184 | 5409 | 3589 | 2233 | 2416 | 1457 | 1005 |
+| 36    | 7284 | 5052 | 3196 | 3066 | 2328 | 1330 | 1583 |

@@ -6,15 +6,15 @@ import ChildMovements
 import RobotMovements
 import Data.Array
 import Utils
-import Configuration(shuffleInterval, boardColumns)
+import Configuration
 
 main::IO()
 main= do
     a <- initBoard
-    loop a 0 shuffleInterval
+    loop a 0 shuffleInterval 0
 
-loop::Board->Int->Int->IO()
-loop board mx s = do 
+loop::Board->Int->Int->Int->IO()
+loop board mx s step = do 
     putStr $ toString board
     let x = moveRobots board s    
     putStr $ toString x
@@ -33,13 +33,21 @@ loop board mx s = do
     putStr $ replicate (2 * boardColumns) '-' ++ "\n\n"
 
     if y == board && not (childMove y)
-    then putStr $ "Max muck percent: " ++ show nmx ++ "%\n" ++ "Finished\n"
+    then do
+        putStr $ "Childs: " ++ show childs ++ "\n"
+        putStr $ "Reactive Robots: " ++ show reactiveRobots ++ "\n"
+        putStr $ "State Robots: " ++ show stateRobots ++ "\n"
+        putStr $ "Obstacles: " ++ show obstacles ++ "\n"
+        putStr $ "Shuffle Interval: " ++ show shuffleInterval ++ "\n"
+        putStr $ "Board: " ++ show boardRows ++ " x " ++ show boardColumns ++ "\n"
+        putStr $ "Steps: " ++ show step ++ "\n"
+        putStr $ "Max muck percent: " ++ show nmx ++ "%\n" ++ "Finished\n"
     else if s == 0
         then do
             putStr "Random Shuffle\n\n"
             z <- shuffle y
-            loop z nmx shuffleInterval
-        else loop y nmx (s - 1)
+            loop z nmx shuffleInterval (step + 1)
+        else loop y nmx (s - 1) (step + 1)
 
 childMove::Board->Bool
 childMove b = any canMove childs
