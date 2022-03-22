@@ -10,7 +10,7 @@
 
 **Grupo:** C-412
 
-**Email:** marcos.valdivie@estudiantes.matcom.uh.cu
+**Email:** marcos.valdivie@estudiantes.matcom.uh.cu   mavaldivie98@gmail.com
 
 **Github:** https://github.com/mavaldivie/Tile-World
 
